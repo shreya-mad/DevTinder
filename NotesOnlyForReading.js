@@ -407,3 +407,32 @@ mongoose.Model("User",userSchema);
           res.status(500).send("there is some error");
       }
 
+
+    // below one post method route for posting data statically ,we will post dynamically in our actual project 
+    // like taking data from req and then post that because data passed from body while posting from postman 
+    // comes in req of the route
+    
+    app.post("/signup",async(req,res)=>{
+        const userObj={
+            firstName:"pinki",
+            lastName:"Madeshiya",
+            email:"smadeshiya12345@gmail.com",
+            password:"shreya@6767",
+            age:25,
+            gender:"female",
+        };
+        // creating a new instance of user model
+        const user=new User(userObj);
+        try{
+            await user.save();
+        res.send("user added succesfully");
+        }catch(err){
+            res.status(400).send("there is some error");
+        }
+    });
+
+    // when we try to console req.body then this will give undefined becuase we are sending data in the form 
+    // of json and our server is not able to read that json data so we need a middleware to read that json data
+    //and convert that json data into javascript object  and that middleware is provided by an express itself 
+    // named express.json()....we write app.use(express.json()) on the top and it will read req for
+    //  all the routes
