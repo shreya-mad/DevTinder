@@ -1,12 +1,12 @@
 const express=require('express');
 const connectionDB=require("./Config/database");
-const User=require("./modeles/user");
+const User=require("./models/user");
 const app=express();
 app.use(express.json());
 
 app.post("/signup",async(req,res)=>{
     // const userObj={
-    //     firstName:"pinki",
+    //     firstName:"pinki ji",
     //     lastName:"Madeshiya",
     //     email:"smadeshiya12345@gmail.com",
     //     password:"shreya@6767",
@@ -20,7 +20,7 @@ app.post("/signup",async(req,res)=>{
         await user.save();
     res.send("user added succesfully");
     }catch(err){
-        res.status(400).send("there is some error");
+        res.status(400).send("there is some error:"+err);
     }
    
 });
@@ -64,7 +64,10 @@ app.delete("/user",async(req,res)=>{
 app.patch("/user",async(req,res)=>{
     try{
         const data=req.body;
-        await User.findByIdAndUpdate({_id:req.body._id},data);
+        console.log(req.body);
+        await User.findByIdAndUpdate({_id:req.body._id},data,{
+            runValidators:true
+        });
         res.send("user updated successfully");
     }catch(err){
         res.status(401).send("something went wrong");

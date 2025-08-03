@@ -511,3 +511,104 @@ mongoose.Model("User",userSchema);
             res.status(401).send("something went wrong");
         }
     });
+
+
+    // take a look of schema creation and model creation in user.js in models folder
+const mongoose=require('mongoose');
+const userSchemaaa=mongoose.Schema({
+    firstName:{
+        type:String,
+         required: true
+    },
+    lastName:{
+        type:String,     
+    },
+    email:{
+        type: String,
+    required: true,
+    unique: true 
+    },
+    password:{
+        type:String,
+         required:true,
+          unique: true ,
+    },
+    age:{
+        type:Number,
+        min:18
+    },
+    gender:{
+        type:String,
+        validite(value){
+            if(value!=='male' || value!=='female' || value!=='transgender'){
+               throw new Error("gender validation fails");
+            }
+
+        }
+    },
+});
+
+module.exports=mongoose.model("User",userSchema);
+
+
+// we can validate something ..like there can be only three genders like below and it is called custom validator or just write  enum: ['male', 'female',"transgender"] in it
+// gender:{
+//         type:String,
+//         validite(value){
+//             if(value!=='male' || value!=='female' || value!=='transgender'){
+//                throw new Error("gender validation fails");
+//             }
+
+//         }
+//     },
+
+// above valid function will only work when post some new data...donest work for updating for for checking it
+// while updating we have to pass runValidator:true in updating route like below
+app.patch("/user",async(req,res)=>{
+    try{
+        const data=req.body;
+        console.log(req.body);
+        await User.findByIdAndUpdate({_id:req.body._id},data,{
+            runValidators:true
+        });
+        res.send("user updated successfully");
+    }catch(err){
+        res.status(401).send("something went wrong");
+    }
+});
+
+// you can add the time stamp ,that mean when data is added by just adding {timeStamps:true} in schema creation like in below
+
+const userSchemaa=mongoose.Schema({
+    firstName:{
+        type:String,
+         required: true
+    },
+    lastName:{
+        type:String,     
+    },
+    email:{
+        type: String,
+    required: true,
+    unique: true 
+    },
+    password:{
+        type:String,
+         required:true,
+          unique: true ,
+    },
+    age:{
+        type:Number,
+        min:18
+    },
+    gender:{
+        type:String,
+        validite(value){
+            if(value!=='male' || value!=='female' || value!=='transgender'){
+               throw new Error("gender validation fails");
+            }
+        }
+    },
+},{ timestamps: true });
+
+
