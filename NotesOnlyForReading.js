@@ -611,4 +611,42 @@ const userSchemaa=mongoose.Schema({
     },
 },{ timestamps: true });
 
+// we can update our email id according to schema written but email is the mail thing for logic so we should keep it no updatable so for that we have write api level validation so that user cant update that field so we need to write codition inside route like below inside the update route
 
+    const data=req.body;
+     // written everthing except what we dont want to update like email id
+    const allowed_update=["firstName","lastName","password","age","gender"];
+    const isUpdateAllowed=Object.keys(data).every((k)=>
+        allowed_update.includes(k)
+    )
+    if(!isUpdateAllowed){
+        res.status(400).send("update not allowed");
+    }
+
+
+    // below one is the whole code for update with email "update not allowed" validation  
+
+    app.patch("/user",async(req,res)=>{
+         const data=req.body;
+         // written everthing except what we dont want to update like email id
+        
+        try{
+            const allowed_update=["firstName","lastName","password","age","gender"];
+        const isUpdateAllowed=Object.keys(data).every((k)=>
+            allowed_update.includes(k)
+        )
+        if(!isUpdateAllowed){
+            res.status(400).send("update not allowed");
+        }
+            console.log(req.body);
+            await User.findByIdAndUpdate({_id:req.body._id},data,{
+                runValidators:true
+            });
+            res.send("user updated successfully");
+        }catch(err){
+            res.status(401).send("something went wrong");
+        }
+    });
+
+
+    // for best practice keep validation on almost all the data
