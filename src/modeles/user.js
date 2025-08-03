@@ -7,7 +7,8 @@ const userSchema=mongoose.Schema({
         type:String
     },
     email:{
-        type:String
+        type:String,
+        
     },
     password:{
         type:String
@@ -19,4 +20,4 @@ const userSchema=mongoose.Schema({
         type:String
     },
 });
-module.exports=mongoose.model("User",userSchema);
+module.exposrts=mongoose.model("User",userSchema);

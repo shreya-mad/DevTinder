@@ -436,3 +436,78 @@ mongoose.Model("User",userSchema);
     //and convert that json data into javascript object  and that middleware is provided by an express itself 
     // named express.json()....we write app.use(express.json()) on the top and it will read req for
     //  all the routes
+
+    //user.findd() in mongoDb gives all the matching data and user.findOne() will return only first
+    // matching data
+
+
+    // ================================================================================================
+
+    // all the api example 
+
+    app.post("/signup",async(req,res)=>{
+        // const userObj={
+        //     firstName:"pinki",
+        //     lastName:"Madeshiya",
+        //     email:"smadeshiya12345@gmail.com",
+        //     password:"shreya@6767",
+        //     age:25,
+        //     gender:"female",
+        // };
+        // creating a new instance of user model
+        console.log(req.body);
+        const user=new User(req.body);
+        try{
+            await user.save();
+        res.send("user added succesfully");
+        }catch(err){
+            res.status(400).send("there is some error");
+        }
+       
+    });
+    
+    app.get("/user",async(req,res)=>{
+        try{
+            const user=await User.find({email:req.body.email});
+            if(user.length===0){
+                res.status(404).send("user not found");
+            }
+            res.send(user);
+        }catch(err){
+            res.status(401).send("something went wrong");
+        }
+    });
+    
+    // getting all the data
+    app.get("/feed",async(req,res)=>{
+        try{
+            const user=await User.find({});
+            if(user.length===0){
+                res.status(404).send("user not found");
+            }
+            res.send(user);
+        }catch(err){
+            res.status(401).send("something went wrong");
+        }
+    });
+    
+    //api for delete
+    app.delete("/user",async(req,res)=>{
+        try{
+            await User.findByIdAndDelete(req.body._id);
+            res.send("user deleted successfully");
+        }catch(err){
+            res.status(401).send("something went wrong");
+        }
+    });
+    
+    //api for update
+    app.patch("/user",async(req,res)=>{
+        try{
+            const data=req.body;
+            await User.findByIdAndUpdate({_id:req.body._id},data);
+            res.send("user updated successfully");
+        }catch(err){
+            res.status(401).send("something went wrong");
+        }
+    });
