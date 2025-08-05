@@ -1,6 +1,9 @@
 const express=require('express');
 const connectionDB=require("./Config/database");
 const User=require("./models/user");
+const {ValidationSignupData}=require('./utils/validation');
+const bcrypt=require('bcrypt');
+// const { use } = require('react');
 const app=express();
 app.use(express.json());
 
@@ -15,14 +18,47 @@ app.post("/signup",async(req,res)=>{
     // };
     // creating a new instance of user model
     console.log(req.body);
-    const user=new User(req.body);
+    const {firstName,lastName,email,password,age,gender}=req.body;
     try{
+        const passwordHash=await bcrypt.hash(password,10);
+        console.log(passwordHash);
+        const user=new User({
+            firstName,
+            lastName,
+            email,
+            passwordHash,
+            age,
+            gender
+        });
+        ValidationSignupData(req);
         await user.save();
-    res.send("user added succesfully");
+        res.send("user added succesfully");
     }catch(err){
         res.status(400).send("there is some error:"+err);
     }
    
+});
+
+app.post("/login",async(req,res)=>{
+   
+try{
+     
+const{email,password}=req.body;
+
+const user=await User.findOne({email:email});
+
+if(!user)
+    throw new Error("invalid email id!!!!");
+
+const isPasswordValid=await bcrypt.compare(password,user.password);
+console.log("shreya:"+isPasswordValid);
+if(isPasswordValid)
+    res.send("login Successfull!!");
+else 
+    throw new Error("password is not Correct");
+}catch(err){
+   res.status(400).send("error:"+err.message);
+}
 });
 
 app.get("/user",async(req,res)=>{

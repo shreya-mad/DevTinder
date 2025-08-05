@@ -650,3 +650,14 @@ const userSchemaa=mongoose.Schema({
 
 
     // for best practice keep validation on almost all the data
+
+    // "validator" is a npm package, which is used for variour validation like email format validation,password validation or something else
+
+//======================================================================================================
+// dont trust on data coming from req.body because user or attacker can send any kind of dat so we should 
+// apply validation on all the data 
+// password should be saved in encrypted format in database instead of original password
+// firstly validate all the data by making function and use validate pavakgae for that 
+// and after that encrypt the password using npm package bcrypt and then store into the database 
+ const passwordHash=await bcrypt.hash(password,10);
+// bcrypt allways return promise so writting await infront of it is must
