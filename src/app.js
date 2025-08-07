@@ -6,14 +6,13 @@ const bcrypt=require('bcrypt');
 const app=express();
 const cookieParser=require('cookie-parser');
 const jwt=require('jsonwebtoken');
-
 app.use(express.json());
 app.use(cookieParser());
 
 
 app.post("/signup",async(req,res)=>{
     const {firstName,lastName,email,password,age,gender}=req.body;
-    
+    console.log("Shreya");
     try{
         ValidationSignupData(req);
 
