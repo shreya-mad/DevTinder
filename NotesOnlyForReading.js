@@ -661,3 +661,41 @@ const userSchemaa=mongoose.Schema({
 // and after that encrypt the password using npm package bcrypt and then store into the database 
  const passwordHash=await bcrypt.hash(password,10);
 // bcrypt allways return promise so writting await infront of it is must
+
+
+// ===============================================================================================
+
+// what is cookies,jwt token 
+// how authentication works
+// when user user logged in then server told that yes,this is correct login credential and then sends a 
+// authentication key named as jwt(json web token) and after login when user hit any kind of api call 
+// then this simply sends to server with that api for authentication purpose like if user request ofr connection
+// on linkdn then simply jwt token also go to server with connection api to authenticate/validate user
+// inside cookies jwt token is stored so when we perform login then cookies are recieved from server,which 
+// contains jwt token
+
+
+// 🆚 Cookies vs JWT
+// Feature	                       Cookies	                             JWT
+// Stored In	           Browser (automatically)	        localStorage / sessionStorage / cookie
+// Sent With Requests	   Automatically by browser	           Manually in headers (usually)
+// Type	                       Session-based	                    Token-based
+// Server Load	                Needs session store	                 Stateless
+// Use Case	Traditional             web apps	                 APIs, SPAs, mobile apps
+
+// ham login krenge to server email psw ko validate krega phir ek jwt token generate krega aur usko
+//  cookies  ke andar wrap kr dega  and this token is very unique (only for that perticular user) and then
+// send that cookie response back to the user,now browser will sotre that and then when we make any kind of api
+// call then cookie goes with that api call to server for validation and then data would be fetched from DB
+// we can send expiry date of that cookie ,like 1 day,1 month or just some hrs
+// aur agr kisi cookie ki expiry ho gayi h to phir jab vo server pe jata hai kisi api call ke sath vo 
+// server use validate nhi kar pata aur error deta hai,failed login,please login again and login page
+//  ko direct kar jata hai  
+// creat jwt token then add the token to cookie ans send the reponse back to the user below is the code for
+// sending token to cookie
+// res.cokkie("token","ldlhfkdhweh3iuohdwekfkhkmdnsmdd");
+// here second one is cookie
+// for getting cokkies while making another api call we need to install a package for that name cookie-parser
+// json web token is divided into three parts 1. header 2.payload 3.signature
+// for jwt ,we use library named jsonwebtoken
+// 

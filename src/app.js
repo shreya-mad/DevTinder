@@ -3,34 +3,32 @@ const connectionDB=require("./Config/database");
 const User=require("./models/user");
 const {ValidationSignupData}=require('./utils/validation');
 const bcrypt=require('bcrypt');
-// const { use } = require('react');
 const app=express();
+const cookieParser=require('cookie-parser');
+const jwt=require('jsonwebtoken');
+
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.post("/signup",async(req,res)=>{
-    // const userObj={
-    //     firstName:"pinki ji",
-    //     lastName:"Madeshiya",
-    //     email:"smadeshiya12345@gmail.com",
-    //     password:"shreya@6767",
-    //     age:25,
-    //     gender:"female",
-    // };
-    // creating a new instance of user model
-    console.log(req.body);
     const {firstName,lastName,email,password,age,gender}=req.body;
+    
     try{
+        ValidationSignupData(req);
+
         const passwordHash=await bcrypt.hash(password,10);
         console.log(passwordHash);
+       console.log(password);
         const user=new User({
             firstName,
             lastName,
             email,
-            passwordHash,
+            password:passwordHash,
             age,
             gender
         });
-        ValidationSignupData(req);
+        
         await user.save();
         res.send("user added succesfully");
     }catch(err){
@@ -42,24 +40,44 @@ app.post("/signup",async(req,res)=>{
 app.post("/login",async(req,res)=>{
    
 try{
-     
 const{email,password}=req.body;
-
 const user=await User.findOne({email:email});
-
 if(!user)
     throw new Error("invalid email id!!!!");
-
 const isPasswordValid=await bcrypt.compare(password,user.password);
 console.log("shreya:"+isPasswordValid);
 if(isPasswordValid)
-    res.send("login Successfull!!");
+{
+    const token=await jwt.sign({_id:user._id},"Dev@Tinder$790");
+    console.log(token);
+    res.cookie("token",token);
+     res.send("login successfull");
+}
 else 
     throw new Error("password is not Correct");
 }catch(err){
    res.status(400).send("error:"+err.message);
 }
 });
+
+app.get("/profile",async(req,res)=>{
+    try{
+        const cookie=req.cookies;
+    console.log(cookie);
+    const {token}=cookie;
+    if(!token)
+        throw new Error("user not found....please log in again");
+    const decodedMsg=await jwt.verify(token,"Dev@Tinder$790");
+    const {_id}=decodedMsg;
+    console.log("logged in user:"+_id);
+    const user=await User.findById(_id);
+    if(!user)
+        throw new Error("user is not exit...");
+    res.send(user);
+    }catch(err){
+        res.status(400).send("there is some error:"+err);
+    }
+})
 
 app.get("/user",async(req,res)=>{
     try{
