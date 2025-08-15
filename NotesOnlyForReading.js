@@ -253,6 +253,8 @@ app.use("/user",auth,(req,res)=>{
     res.send('Hello, Worldddd!..................this is final data after provided to uathorised person after authorisation done');
 })
 
+// upar ke api ko jab ham hit krenege to pahle ye auth function pe jaega aur validate krega aur agar user validate ya authorised hoga to phir ye (req,res) wale fucntion pe jaega aur agr user authorided nhi hoga to phir ye api chalega hi nhi 
+
 // in case user login route,we dont need to make it authorised so route for that would be like below
 
 app.get("/login",(req,res)=>{
@@ -515,6 +517,7 @@ mongoose.Model("User",userSchema);
 
     // take a look of schema creation and model creation in user.js in models folder
 const mongoose=require('mongoose');
+const { ValidationSignupData } = require('./src/utils/validation');
 const userSchemaaa=mongoose.Schema({
     firstName:{
         type:String,
@@ -698,4 +701,118 @@ const userSchemaa=mongoose.Schema({
 // for getting cokkies while making another api call we need to install a package for that name cookie-parser
 // json web token is divided into three parts 1. header 2.payload 3.signature
 // for jwt ,we use library named jsonwebtoken
-// 
+// signup aur login ke alawa jitne bhi api hai vo bina authentication ke nhi chalnege,means jwt token ke bina
+
+// example of all the ttype of api 
+
+
+app.get("/user",async(req,res)=>{
+    try{
+        const user=await User.find({email:req.body.email});
+        if(user.length===0){
+            res.status(404).send("user not found");
+        }
+        res.send(user);
+    }catch(err){
+        res.status(401).send("something went wrong");
+    }
+});
+
+// getting all the data
+app.get("/feed",async(req,res)=>{
+    try{
+        const user=await User.find({});
+        if(user.length===0){
+            res.status(404).send("user not found");
+        }
+        res.send(user);
+    }catch(err){
+        res.status(401).send("something went wrong");
+    }
+});
+
+//api for delete
+app.delete("/user",async(req,res)=>{
+    try{
+        await User.findByIdAndDelete(req.body._id);
+        res.send("user deleted successfully");
+    }catch(err){
+        res.status(401).send("something went wrong");
+    }
+});
+
+//api for update
+app.patch("/user",async(req,res)=>{
+    
+    try{
+        const data=req.body;
+     // written everthing except what we dont want to update like email id
+    const allowed_update=["firstName","lastName","password","age","gender"];
+    const isUpdateAllowed=Object.keys(data).every((k)=>
+        allowed_update.includes(k)
+    )
+    if(!isUpdateAllowed){
+        res.status(400).send("update not allowed");
+    }
+        console.log(req.body);
+        await User.findByIdAndUpdate({_id:req.body._id},data,{
+            runValidators:true
+        });
+        res.send("user updated successfully");
+    }catch(err){
+        res.status(401).send("something went wrong");
+    }
+});
+
+
+// jwt token se sare api ko authorise krne ka logic ek alag page me likhenge aur phir sare me api me rote ke bad us function ko calll kr denege jaise isme middlewares me auth.js me logic likha hai
+
+
+// setting expiry time in jwt token is by setting {expiresIn:'1d'} in bellow token setting code for expiry time 1 day
+const token=await jwt.sign({_id:user._id},"Dev@Tinder$790",{expiresIn:'1d'});
+
+// we can expire cookies as well similar to the token soething like below,below is not eaxctly correct like passing date or time for expiry
+
+ res.cookie("token",token,{expires:new Date(Date.now()+8*36000000)});
+
+//  expry of token is must part for secirity purpose
+
+
+// ALL THE APIs REQUIRED FOR DEV-TINDER APPLICATION
+// post/signup
+// post/login 
+// post/logout 
+
+
+// get/profile/view 
+// patch/profile/edit 
+
+
+// patch/profile/password(forget password)  
+// status:ignore,interested,accepted,rejected
+
+// post/request/send/interested/:userID
+// post/request/send/ignored/:userID
+// post/request/review/accepted/:requestID
+// post/request/review/rejected/:requestID
+
+// get/connection   
+// get/request/received
+// get/feed          --for showing suggested profile
+
+// express router is used to route all the APIs....like we can keep all the apis in single file like app.js but that is good practice to keep large no of apis like 100 in single file so we should route those api in different groups
+
+// there is no performance difference between app.post or app.expressRouter.post for making any api
+// const app=express();
+// const authRouter=express.Router();
+
+// hamne sare api ko routes folder ke andar alag alag files banake kr diya hai but vo just for best practice ke liye hai ...ham adirect api ko app.js me bhi bana skte hai to router sirf systematic way me representarion ke liye hai
+
+// logout me simply token ko expire kr denege...like below...hamne expiry time ko current time kr doya jisse cokkie turant expire ho jaegi
+
+authRouter.post("/logout",async(req,res)=>{   
+ res.cookie("token",null,{
+    expires:new Date(Date.now()),
+ })
+ res.send("logout successfully");
+});

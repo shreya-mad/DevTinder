@@ -9,5 +9,14 @@ else if(!validator.isEmail(email))
      throw new Error("email address is Not Valid!!");
 else if(!validator.isStrongPassword(password))
      throw new Error("please enter a strong password!!");  
-}
-module.exports={ValidationSignupData};
+};
+const ValidationProfileData=(req)=>{
+const allowedEdtFields=["firstName","lastName","password"];
+const isAllowed=Object.keys(req.body).every(field=>
+     allowedEdtFields.includes(field)
+);
+console.log(isAllowed);
+return isAllowed;
+};
+
+module.exports={ValidationSignupData,ValidationProfileData};
