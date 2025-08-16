@@ -1,10 +1,49 @@
 const express=require('express');
 const { auth } = require('../middlewares/auth');
 const requestRouter=express.Router();
+const ConnectionRequest = require("../models/connectionRequest");
+const User=require("../models/user");
 
-requestRouter.post('/sendConnectionRequest',auth,async(req,res)=>{
-    const user=req.user;
+// below one is the api for both interested or rejected
+requestRouter.post('/Request/send/:status/:toUserId',auth,async(req,res)=>{
+    try{        
+      const fromUserID=req.user._id; 
+      const toUserID=req.params.toUserId;
+      const status=req.params.status;
+     const allowedStatus=["interested","ignored"];
+     if(!allowedStatus.includes(status))
+       return res.status(400).send("invalid status type");
+    // handling if user sends request to himself
+    if(fromUserID==toUserID)
+        return res.status(400).json({message:"can not send connection request to youself"});
+    // code for handling if toUserId is not present in our db
+    const isToUserPresent=await User.findOne({_id:toUserID});
+    if(!isToUserPresent)
+        return res.status(400).json({message:"user  not found"});
+    const allreadyRequestExist=await ConnectionRequest.findOne({
+        $or:[
+          { fromUserID,toUserID},
+          { fromUserID:toUserID,toUserID:fromUserID}
+        ]
+       
+    });
+    if(allreadyRequestExist)
+        return res.send("there is allready conncetion request pending");
 
-    res.send("connection sent successfully!! and the user name is:"+user.firstName+" "+user.lastName);
+    
+      const user=new ConnectionRequest({
+        fromUserID,
+        toUserID,
+        status
+      });
+       console.log("shreya");
+      const data=await user.save();
+      res.json({
+        message:req.user.firstName+" is "+status+" in "+isToUserPresent.firstName,
+        data
+      });
+    }catch(err){
+        res.status(404).send("there is something wrong in sending connection request");
+    }
 });
 module.exports=requestRouter;

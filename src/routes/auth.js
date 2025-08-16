@@ -31,6 +31,7 @@ authRouter.post("/signup",async(req,res)=>{
     }
    
 });
+
 authRouter.post("/login",async(req,res)=>{   
 try{
 const{email,password}=req.body;
@@ -61,5 +62,17 @@ authRouter.post("/logout",async(req,res)=>{
  })
  res.send("logout successfully");
 });
+
+
+authRouter.post("/profile/reset-password",async(req,res)=>{
+    const {email}=req.body;
+    console.log(email);
+    const isEmailExist=await User.findOne({email:email});
+      console.log(isEmailExist);
+    if(!isEmailExist)
+        throw new Error("user not found!!!");
+    else
+    res.send("email feching done");
+})
 
 module.exports=authRouter;
