@@ -12,7 +12,6 @@ if(!user){
     throw new Error("user not fund");
 }
     req.user=user;
-    console.log("this is shreya: ");
     next();
 } catch(err){
    res.status(400).send("error:"+err.message);

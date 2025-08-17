@@ -4,7 +4,7 @@ const requestRouter=express.Router();
 const ConnectionRequest = require("../models/connectionRequest");
 const User=require("../models/user");
 
-// below one is the api for both interested or rejected
+// below one is the api for both interested or ignored
 requestRouter.post('/Request/send/:status/:toUserId',auth,async(req,res)=>{
     try{        
       const fromUserID=req.user._id; 
@@ -46,4 +46,28 @@ requestRouter.post('/Request/send/:status/:toUserId',auth,async(req,res)=>{
         res.status(404).send("there is something wrong in sending connection request");
     }
 });
+// below one is the api for both acdepted or rejected
+requestRouter.post("/request/review/:status/:requestID",auth,async(req,res)=>{
+  try{
+
+    const logggedInUser=req.user;
+        console.log("shreya"+logggedInUser._id);
+    const {status,requestID}=req.params;
+    const allowedStatus=['accepted', 'rejected'];
+    if(!allowedStatus.includes(status))
+      return res.status(400).json({message:"status not correct"});
+    const connectionRequest=await ConnectionRequest.findOne({
+      _id:requestID,
+      toUserID:logggedInUser._id,
+      status:'interested'
+    });
+    if(!connectionRequest)
+      return res.status(404).json({message:"connection reuqest not found"});
+    connectionRequest.status=status;
+    const successData=await connectionRequest.save();
+    return res.json({message:"connection request "+status,successData});
+  }catch(err){
+
+  }
+})
 module.exports=requestRouter;

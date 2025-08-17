@@ -10,12 +10,14 @@ const { auth } = require('./middlewares/auth');
 const authRouter=require('./routes/auth');
 const requestRouter=require('./routes/request');
 const profileRouter=require('./routes/profile');
+const userRouter=require('./routes/user');
 app.use(express.json());
 app.use(cookieParser());
-
+app.use("/",userRouter);
 app.use("/",authRouter);
 app.use("/",requestRouter);
 app.use("/",profileRouter);
+
  connectionDB().then(()=>{
     console.log("DB Connection created successfully");
     app.listen(4000,()=>{
