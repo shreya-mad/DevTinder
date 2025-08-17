@@ -32,7 +32,7 @@ userRouter.get("/user/connections",auth,async(req,res)=>{
     }).populate('fromUserID',["firstName","lastName","email"])
     .populate('toUserID',["firstName","lastName","email"]);
     const data=allConnections.map(row=>{
-      if(row.fromUserID._id===logggedInUser._id)
+      if(row.fromUserID._id.toString()===logggedInUser._id.toString())
         return row.toUserID;
       return row.fromUserID;
     })
@@ -43,6 +43,6 @@ userRouter.get("/user/connections",auth,async(req,res)=>{
   }catch(err){
     res.status(400).send("there is something wrong"+err);
   }
-})
+});
 module.exports=userRouter;
 

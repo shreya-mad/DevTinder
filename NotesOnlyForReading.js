@@ -816,3 +816,67 @@ authRouter.post("/logout",async(req,res)=>{
  })
  res.send("logout successfully");
 });
+
+
+// What is Nodemailer?
+// here it is used for senfing mail for reset password
+// Nodemailer is a Node.js library that lets your server send emails.
+// It works like a “postman” between your app and an email server (SMTP server).
+// With it, you can:
+// Send password reset emails
+// Send OTPs
+// Send welcome/verification mails
+// Even send attachments
+// Without Nodemailer, you’d have to manually implement SMTP(Simple Mail Transfer Protocol), which is complex.
+
+// How Nodemailer Works (simplified)
+// Your Node.js app creates a connection to an SMTP server (like Gmail, Outlook, SendGrid).
+// Nodemailer authenticates with that server (username + password or API key).
+// You tell Nodemailer the sender, recipient, subject, and message.
+// The SMTP server delivers the email to the recipient’s inbox.
+
+
+// we can witre connection loigc in user schema ,like make filed connection and store all the reqnst id 
+// into that but we should make connection schema seperate bease because if one sends connection then
+//  other one can reject it as well and if there is connection between two user then it should have 
+// seperate schema .....jab 2 user ke beech connection banta hai to us connection ka ek seprate schema bhi
+//  hona chaiye 
+// so simple ki hame ek schema banana hoga connection ka 
+// model folder me connectionRequest.js name ka file banao aur usme uska schema banao..ime hame sender 
+// aur receiver ki identity chaiye and unke beech connection ka status like ignore,interested,accepted rejected 
+
+
+// INDEXING
+
+// when our data is too large on database so if we have written any query to search something then that 
+// will be so much shlow because that will search in whole data so for resolving this issue we need 
+// indexing in our datbase and that results in faster api response  
+// we can apply index on any data by just simply below line in schema creation
+// index:true
+// ham agr kisi field ko unique set krke rkhe hai to usme automatically index lag jati hai
+// compound indexing is nothing but way of applying indexing on all those fields that are searching 
+// together and that we can done beelow way in schema file as well 
+// connectionReuqestSchema.index({fromUserId:1,toUserId:1});
+// hame indexing unnessesary fileds pe nhi lagani chaiye
+
+// 1. Indexes speed up reads, but slow down writes
+        // When you insert, update, or delete a record, the database must also update all related indexes.
+        // If you put indexes on every field, every write operation becomes slower
+// 🔹 2. Indexes consume storage
+        // Each index is stored separately from the table data.
+        // More indexes = more disk space used.
+// we really dont need to use indexing ir user count  interacting with our application is 100-1000
+// tinder me interested ka matlab hai ki hamne usko connection reuqest bheja hai
+
+// we can make connection between two tables(collection) in mongoDB just by using  below line in any field
+// ref:'User'....here user is name of different table
+// so agr hameconnectionReuqest table me fromUserID me ref:"User" laga diya to iska mltb hai ki hamne 
+// ye fromUserId User table se liya hai......ab iske bad ham jaha bhi ham connectionRequest table se 
+// data fetach kr rhe hai vaha agr end me .populate('fromUserID',['firstName','lastName']) likh deneg to 
+// hame usme user table se us id ka jitna bhi filed isme likheneg vo bhi get ho jaega ..jaise yaha hamne 
+// firstName and lastName liya hai aur agr ham [] ke andar kuch bhi nhi likheneg to ye User table ke 
+// sare detais de dega
+// mongoDB me bhi tables (collections) me relation lagate hai jaise yaha hamne ref:tableName kr diya to 
+// ham sdusre table a data get kr skte hai 
+// we cant conpare two id directly bcos those aere in object form so i need to convert thos into string 
+// by toString() 
