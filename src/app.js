@@ -11,8 +11,13 @@ const authRouter=require('./routes/auth');
 const requestRouter=require('./routes/request');
 const profileRouter=require('./routes/profile');
 const userRouter=require('./routes/user');
+const cors=require('cors');
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5173", // Your React app's URL
+  credentials: true, // Allow cookies or Authorization headers
+}));
 
 app.use("/",authRouter);
 app.use("/",requestRouter);

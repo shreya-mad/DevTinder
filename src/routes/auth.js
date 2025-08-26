@@ -15,9 +15,9 @@ const nodemailer=require('nodemailer');
 //         user:"smadeshiya12345@gmail.com",
 //         pass:""
 //     }
-// })
+// });
 authRouter.post("/signup", async (req, res) => {
-  const { firstName, lastName, email, password, age, gender } = req.body;
+  const { firstName, lastName, email, password, age, gender,profilePicture } = req.body;
   try {
     ValidationSignupData(req);
     const passwordHash = await bcrypt.hash(password, 10);
@@ -28,6 +28,7 @@ authRouter.post("/signup", async (req, res) => {
       password: passwordHash,
       age,
       gender,
+      profilePicture
     });
 
     await user.save();
@@ -48,7 +49,7 @@ authRouter.post("/login", async (req, res) => {
         expiresIn: "1h",
       });
       res.cookie("token", token);
-      res.send("login successfull");
+      res.send(user);
     } else throw new Error("password is not Correct");
   } catch (err) {
     res.status(400).send("error:" + err.message);

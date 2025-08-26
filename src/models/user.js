@@ -31,6 +31,9 @@ const userSchema = mongoose.Schema(
         }
       },
     },
+    profilePicture:{
+      type:String
+    }
   },
   { timestamps: true }
 );
