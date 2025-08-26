@@ -41,6 +41,31 @@
 // A bundler is a tool that takes all the different files in your project (JavaScript, CSS, images, etc.)
 //  and combines them into optimized files that browsers can understand and load efficiently.
 
+// when we make an api call from x domain to y domain then it gives CORS (Cross-Origin Resource Sharing) error
+// to iske liye hame api side se handle krna padega
 
-// tailwind setup
-// 
+// if our api is not https then axios doesnt allows it to set token value in cookies 
+
+// we can set origin and credentials in cors like below, so by setting origin:"http://localhost:3000" or
+// origin: ["http://localhost:3000", "https://myapp.com"]
+// we are providing the origin(domain) ,which is allowed only to make api call on that api and other domin
+// are blocked for making api call on this api
+
+// credentials in CORS
+
+// Purpose: Controls whether cookies, authorization headers, or TLS client certificates are sent in cross-origin requests.
+
+// Why needed:
+// By default, browsers do not send credentials in cross-origin requests for security.
+// You must explicitly enable this if your app needs cookies or JWT tokens in Authorization headers.
+// and by setting credential:true.....we are allowing frontend to send jwt token provided by this api to
+// another api call for authentication purpose
+// for allowing to send jwt token we need to set credential:true and if we have set credential:true then 
+// we must specify domain ,we cant open our api to allow request from any domain
+// agr hamne credential:true nhi set kiya hai to agr ham fronted se koi api call me agr credential:
+// "include" bhi kr denge to bhi jwt token nhi jawega ,as we know ki jwt token ko bhejne ke liye hame api 
+// me credential:'include' set krna padta hai...like below
+// fetch("http://localhost:5000/api/user", {
+//   credentials: "include"
+// });
+
