@@ -11,7 +11,7 @@ else if(!validator.isStrongPassword(password))
      throw new Error("please enter a strong password!!");  
 };
 const ValidationProfileData=(req)=>{
-const allowedEdtFields=["firstName","lastName","password"];
+const allowedEdtFields=["firstName","lastName","age","gender","profilePicture"];
 const isAllowed=Object.keys(req.body).every(field=>
      allowedEdtFields.includes(field)
 );

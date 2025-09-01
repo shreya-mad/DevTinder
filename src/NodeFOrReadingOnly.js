@@ -69,3 +69,8 @@
 //   credentials: "include"
 // });
 
+
+// in strict mode all the APIs are called twice in devMode but in production it will make only 
+// one api call 
+
+

@@ -7,17 +7,16 @@ const authRouter = express.Router();
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const nodemailer=require('nodemailer');
+const nodemailer = require("nodemailer");
 
-// const transporter=nodemailer.createTransport({
-//     service:"gmail",
-//     {
-//         user:"smadeshiya12345@gmail.com",
-//         pass:""
-//     }
-// });
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: { user: "smadeshiya12345@gmail.com", pass: "govs pagx blsj alei" },
+});
+
 authRouter.post("/signup", async (req, res) => {
-  const { firstName, lastName, email, password, age, gender,profilePicture } = req.body;
+  const { firstName, lastName, email, password, age, gender, profilePicture } =
+    req.body;
   try {
     ValidationSignupData(req);
     const passwordHash = await bcrypt.hash(password, 10);
@@ -28,7 +27,7 @@ authRouter.post("/signup", async (req, res) => {
       password: passwordHash,
       age,
       gender,
-      profilePicture
+      profilePicture,
     });
 
     await user.save();
@@ -48,7 +47,7 @@ authRouter.post("/login", async (req, res) => {
       const token = await jwt.sign({ _id: user._id }, "Dev@Tinder$790", {
         expiresIn: "1h",
       });
-      res.cookie("token", token);
+      res.cookie("token",token);
       res.send(user);
     } else throw new Error("password is not Correct");
   } catch (err) {
@@ -60,24 +59,44 @@ authRouter.post("/logout", async (req, res) => {
   res.cookie("token", null, {
     expires: new Date(Date.now()),
   });
-  res.send("logout successfully");
+  res.json({message:"logout successfully"});
 });
 
-authRouter.post("/profile/reset-password", async (req, res) => {
+authRouter.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await User.findOne({ email: email });
-    console.log(user);
-    if (!user) throw new Error("user not found!!!");
-    else {
-      const resetToekn = await jwt.sign({ _id: user._id }, "Dev@Tinder$790", {
-        expiresIn: "15m",
-      });
-      const tokenUrl = `http://localhost:4000/profile/reset-password-by-mail/${resetToekn}`;
-    }
-    res.send("email feching done");
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const token = jwt.sign({ id: user._id }, "Dev@Tinder$790", {
+      expiresIn: "15m",
+    });
+    const resetURL = `http://localhost:3000/reset-password/${token}`;
+    await transporter.sendMail({
+      to: user.email,
+      subject: "Password Reset",
+      html: `<p>Click <a href="${resetURL}">here</a> to reset your password.</p>`,
+    });
+    res.json({ message: "Password reset link sent to your email" });
   } catch (err) {
-    res.status(404).send("there is something wrong" + err.message);
+    res.status(500).json({ message: "Server error", error: err });
+  }
+});
+
+authRouter.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  try {
+    const decoded = jwt.verify(token, "Dev@Tinder$790");
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.findByIdAndUpdate(decoded.id, { password: hashedPassword });
+    res.json({ message: "Password successfully reset" });
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res
+        .status(400)
+        .json({ message: "Token expired. Please request a new one." });
+    }
+    return res.status(400).json({ message: "Invalid token" });
   }
 });
 

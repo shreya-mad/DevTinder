@@ -36,7 +36,6 @@ requestRouter.post('/Request/send/:status/:toUserId',auth,async(req,res)=>{
         toUserID,
         status
       });
-       console.log("shreya");
       const data=await user.save();
       res.json({
         message:req.user.firstName+" is "+status+" in "+isToUserPresent.firstName,
@@ -51,7 +50,6 @@ requestRouter.post("/request/review/:status/:requestID",auth,async(req,res)=>{
   try{
 
     const logggedInUser=req.user;
-        console.log("shreya"+logggedInUser._id);
     const {status,requestID}=req.params;
     const allowedStatus=['accepted', 'rejected'];
     if(!allowedStatus.includes(status))
