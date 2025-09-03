@@ -1,7 +1,7 @@
 const express = require("express");
 const ConnectionRequest = require("../models/connectionRequest");
 const { auth } = require("../middlewares/auth");
-const connectionRequest = require("../models/connectionRequest");
+// const connectionRequest = require("../models/connectionRequest");
 const userRouter = express.Router();
 const User = require("../models/user");
 userRouter.get("/user/requests/received", auth, async (req, res) => {
@@ -69,12 +69,15 @@ userRouter.get("/user/feed", auth, async (req, res) => {
     });
     // below one is for getting all the profile excpet those profile which cant be feed rpofile like
     // requested profile,allready in connection,himeself profile etc.
-    const users = await User.find({
-      _id: { $nin: Array.from(hideUsersFromFeed) },
-      // loggedInUser ios allready included in hideUserfromfeed so dont need to add below line with and
-      // of above one
-      // ,{_id:{$ne:logggedInUser._id}}],
-    }).skip(skip).limit(limit);;
+   const users = await User.find({
+  _id: {
+    $nin: Array.from(hideUsersFromFeed),
+    $ne: logggedInUser._id
+  }
+})
+.skip(skip)
+.limit(limit);
+
 
     res.json({ message: "successfull", data: users });
     // above one is just basic feed api ....actual api should have more complex algo behind showing
