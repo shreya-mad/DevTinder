@@ -10,11 +10,11 @@ userRouter.get("/user/requests/received", auth, async (req, res) => {
     const allUser = await ConnectionRequest.find({
       toUserID: logggedInUser._id,
       status: "interested",
-    }).populate("fromUserID", ["firstName", "lastName"]);
+    }).populate("fromUserID", ["firstName", "lastName","profilePicture","age","gender"]);
     // hamene populate wala isliye kiya kyuki  reuqest recived profile ka complete data chhaiye naki keval sender ki id
     res.json({
       message: "all the reuqest fetched successfully",
-      allUser,
+      data:allUser,
     });
   } catch (err) {
     res.send("there is some error" + err.message);

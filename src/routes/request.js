@@ -45,7 +45,7 @@ requestRouter.post('/Request/send/:status/:toUserId',auth,async(req,res)=>{
         res.status(404).send("there is something wrong in sending connection request");
     }
 });
-// below one is the api for both acdepted or rejected
+// below one is the api for both accepted or rejected
 requestRouter.post("/request/review/:status/:requestID",auth,async(req,res)=>{
   try{
 
@@ -63,9 +63,9 @@ requestRouter.post("/request/review/:status/:requestID",auth,async(req,res)=>{
       return res.status(404).json({message:"connection reuqest not found"});
     connectionRequest.status=status;
     const successData=await connectionRequest.save();
-    return res.json({message:"connection request "+status,successData});
+    return res.json({message:"connection request "+status,data:successData});
   }catch(err){
-
+console.log("there is some error");
   }
 })
 module.exports=requestRouter;
