@@ -70,7 +70,7 @@ authRouter.post("/forgot-password", async (req, res) => {
     const token = jwt.sign({ id: user._id }, "Dev@Tinder$790", {
       expiresIn: "15m",
     });
-    const resetURL = `http://localhost:3000/reset-password/${token}`;
+    const resetURL = `http://localhost:5173/reset-password/${token}`;
     await transporter.sendMail({
       to: user.email,
       subject: "Password Reset",
@@ -85,11 +85,15 @@ authRouter.post("/forgot-password", async (req, res) => {
 authRouter.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
+  console.log(password);
   try {
     const decoded = jwt.verify(token, "Dev@Tinder$790");
+
     const hashedPassword = await bcrypt.hash(password, 10);
     await User.findByIdAndUpdate(decoded.id, { password: hashedPassword });
     res.json({ message: "Password successfully reset" });
+    console.log("shreya");
+    console.log(decoded);
   } catch (err) {
     if (err.name === "TokenExpiredError") {
       return res
