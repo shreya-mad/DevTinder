@@ -11,6 +11,7 @@ const authRouter=require('./routes/auth');
 const requestRouter=require('./routes/request');
 const profileRouter=require('./routes/profile');
 const userRouter=require('./routes/user');
+require('dotenv').config();
 const cors=require('cors');
 app.use(express.json());
 app.use(cookieParser());

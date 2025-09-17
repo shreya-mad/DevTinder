@@ -929,4 +929,8 @@ const connectionRequest = await ConnectionRequest.find({
 // Yahaan : variables ya wildcards hote hain, lekin ?, &, = jaise query string ke symbols 
 // path ke part nahi hote.
 // agar hamne query parameter me kuch bhi random dal diya h to ongodb usko ignore kr dega
+// for securing any secrete data like connection string and secret key for authentication 
+// and all we will make .env file and then keep that .env file in .gitignore so that it 
+// donsnt get push on github and during production ,we need to make .env file manually and then 
+// keep all the keys exact same as our prject in ec2 instance in aws
 

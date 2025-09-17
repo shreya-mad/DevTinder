@@ -5,7 +5,7 @@ try{
 const {token}=req.cookies;
 if(!token)
     throw new Error("token is not valid!!!!!");
-const decodedObj=await jwt.verify(token,"Dev@Tinder$790");
+const decodedObj=await jwt.verify("Dev@Tinder$790");
 const {_id}=decodedObj;
 const user=await User.findById({_id});
 if(!user){
