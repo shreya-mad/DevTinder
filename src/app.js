@@ -2,7 +2,7 @@ const express=require('express');
 const connectionDB=require("./Config/database");
 const User=require("./models/user");
 const {ValidationSignupData}=require('./utils/validation');
-const bcrypt=require('bcrypt');
+const bcrypt = require("bcryptjs");
 const app=express();
 const cookieParser=require('cookie-parser');
 const jwt=require('jsonwebtoken');
@@ -24,6 +24,7 @@ app.use("/",authRouter);
 app.use("/",requestRouter);
 app.use("/",profileRouter);
 app.use("/",userRouter);
+
  connectionDB().then(()=>{
     console.log("DB Connection created successfully");
     app.listen(4000,()=>{
