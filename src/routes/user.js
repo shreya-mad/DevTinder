@@ -23,7 +23,7 @@ userRouter.get("/user/requests/received", auth, async (req, res) => {
 userRouter.get("/user/connections", auth, async (req, res) => {
   try {
     const logggedInUser = req.user;
-    const allConnections = await connectionRequest
+    const allConnections = await ConnectionRequest
       .find({
         $or: [
           { toUserID: logggedInUser._id },
@@ -33,6 +33,7 @@ userRouter.get("/user/connections", auth, async (req, res) => {
       })
       .populate("fromUserID", ["firstName", "lastName", "email","profilePicture"])
       .populate("toUserID", ["firstName", "lastName", "email","profilePicture"]);
+     
     const data = allConnections.map((row) => {
       if (row.fromUserID._id.toString() === logggedInUser._id.toString())
         return row.toUserID;
