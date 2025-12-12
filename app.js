@@ -19,7 +19,7 @@ app.use(cors({
   origin: [
           "https://devconnectui.onrender.com", // Your React app's URL
           "http://localhost:5173",
-          // "http://localhost:5173"
+          "https://devtinderui-4vjs.onrender.com"
           ],
   credentials: true, // Allow cookies or Authorization headers
 }));
