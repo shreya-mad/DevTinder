@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: { user: "smadeshiya12345@gmail.com", pass: "govs pagx blsj alei" },
 });
-
+//Shreya
 authRouter.post("/signup", async (req, res) => {
   const { firstName, lastName, email, password, age, gender, profilePicture } =
     req.body;
