@@ -47,7 +47,13 @@ authRouter.post("/login", async (req, res) => {
       const token = await jwt.sign({ _id: user._id }, "Dev@Tinder$790", {
         expiresIn: "1h",
       });
-      res.cookie("token",token);
+      //res.cookie("token",token);
+      res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,       // Render पर जरूरी
+  sameSite: "none",   // Cross-site के लिए जरूरी
+});
+
       res.send(user);
     } else throw new Error("password is not Correct");
   } catch (err) {
@@ -102,3 +108,4 @@ authRouter.post("/reset-password/:token", async (req, res) => {
 });
 
 module.exports = authRouter;
+
